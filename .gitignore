@@ -1,0 +1,7 @@
+# Compiled artifacts
+**/build/
+
+# Output/vault.txt (runtime data store - keep out of version control)
+**/output/vault.txt
+# keep the directory itself (see README, .gitkeep)
+!**/output/
