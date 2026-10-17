@@ -16,11 +16,11 @@ typedef struct {
 } Account;
 
 int main(void) {
-    int running = 1;          // menu loop flag; 0 = exit
-    char cmd[16];             // what the user typed
-    Account vault[1024];      // up to 1024 stored accounts
-    int account_count = 0;    // how many slots are actually filled
-    int choice;               // which account the user picked
+    int running = 1;        // menu loop flag; 0 = exit
+    char cmd[16];           // what the user typed
+    Account vault[1024];    // up to 1024 stored accounts
+    int account_count = 0;  // how many slots are actually filled
+    int choice;             // which account the user picked
 
     // --- Load the vault from disk (if it exists) ------------------
     // fopen with "r" returns NULL if there's no file yet, which is
