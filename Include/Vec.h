@@ -1,5 +1,5 @@
-// vec.h — the menu. Only the API lives here: the struct and the function
-// prototypes. No implementation. main.c and vec.c both #include this so
+// Vec.h — the menu. Only the API lives here: the struct and the function
+// prototypes. No implementation. Test.c and Vec.c both #include this so
 // they agree on what a Vec is and what the functions look like.
 //
 // The header guard (next two lines + #endif at the bottom) makes this file
@@ -21,19 +21,19 @@ typedef struct {
                  //        grows 4 → 8 → 16 by doubling.
 } Vec;
 
-// Prototypes = "these functions exist somewhere (vec.c), here's their
+// Prototypes = "these functions exist somewhere (Vec.c), here's their
 // signature so callers can use them." Main.c sees these and trusts them;
 // the linker joins main.o to the real bodies in vec.o at the end.
 // The * means: pass the crate's ADDRESS, so the function can modify the
-// real Vec instead of a copy. Callers write vec_init(&v).
-void vec_init(Vec* vec);  // empty the crate: items=NULL, used=0, room=0
-void vec_push(Vec* vec,
+// real Vec instead of a copy. Callers write vecInit(&v).
+void vecInit(Vec* vec);  // empty the crate: items=NULL, used=0, room=0
+void vecPush(Vec* vec,
               int value);  // append value, growing the chunk if it's full
-int vec_get(Vec* vec,
+int vecGet(Vec* vec,
             int index);  // return items[index] (bounds-checked)
-void vec_set(Vec* vec, int index,
+void vecSet(Vec* vec, int index,
              int value);  // overwrite items[index] (bounds-checked)
-int vec_pop(Vec* vec);    // remove + return last item (errors if empty)
-void vec_free(Vec* vec);  // give the heap chunk back to the OS
+int vecPop(Vec* vec);    // remove + return last item (errors if empty)
+void vecFree(Vec* vec);  // give the heap chunk back to the OS
 
 #endif

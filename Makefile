@@ -1,15 +1,15 @@
 CC      = clang
-CFLAGS  = -Wall -Wextra -g -O0 -Iinclude
+CFLAGS  = -Wall -Wextra -g -O0 -IInclude
 SAN     = -fsanitize=address,undefined
 
-build/vec: build/test.o build/vec.o
+build/vec: build/Test.o build/Vec.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-build/test.o: tests/test.c include/vec.h
-	$(CC) $(CFLAGS) -c tests/test.c -o $@
+build/Test.o: Tests/Test.c Include/Vec.h
+	$(CC) $(CFLAGS) -c Tests/Test.c -o $@
 
-build/vec.o: src/vec.c include/vec.h
-	$(CC) $(CFLAGS) -c src/vec.c -o $@
+build/Vec.o: Src/Vec.c Include/Vec.h
+	$(CC) $(CFLAGS) -c Src/Vec.c -o $@
 
 .PHONY: clean
 clean:

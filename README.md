@@ -15,10 +15,10 @@ can. It starts with room for 4 and doubles whenever it fills up.
   is the kitchen (the implementation), `test.c` is the test harness
 - `#include "..."` vs `#include <...>`, header guards
 - a Makefile that builds the `.o` files and links them
-- bounds-checking the public ops: `vec_get` / `vec_set` validate the index
-  against `used`, `vec_pop` refuses an empty crate — a bad call exits with a
+- bounds-checking the public ops: `vecGet` / `vecSet` validate the index
+  against `used`, `vecPop` refuses an empty crate — a bad call exits with a
   message instead of quietly reading or writing junk
-- `static` for `check_index`: file-private, shared by get and set, and
+- `static` for `checkIndex`: file-private, shared by get and set, and
   deliberately *not* in `vec.h`
 - why ASan exists: once it caught a heap-buffer-overflow I didn't even know
   I had, then caught a leak. Run the sanitizer build, learn the bug is real.
@@ -27,9 +27,9 @@ can. It starts with room for 4 and doubles whenever it fills up.
 
 ```
 Dynamic-Array/
-├── include/vec.h   # the Vec struct + prototypes (the API)
-├── src/vec.c       # the implementation
-├── tests/test.c    # one test per function
+├── Include/Vec.h   # the Vec struct + prototypes (the API)
+├── Src/Vec.c       # the implementation
+├── Tests/Test.c    # one test per function
 ├── build/          # objects + binary (gitignored)
 ├── Makefile
 └── README.md
@@ -51,12 +51,12 @@ only jumps when the bus is full.
 ## API
 
 ```c
-void vec_init(Vec* vec);                       // start empty: items=NULL, used=0, room=0
-void vec_push(Vec* vec, int value);            // append; doubles capacity when full
-int  vec_get(Vec* vec, int index);             // read items[index] (bounds-checked)
-void vec_set(Vec* vec, int index, int value);  // overwrite items[index] (bounds-checked)
-int  vec_pop(Vec* vec);                        // remove + return last (errors if empty)
-void vec_free(Vec* vec);                       // hand the heap chunk back
+void vecInit(Vec* vec);                       // start empty: items=NULL, used=0, room=0
+void vecPush(Vec* vec, int value);            // append; doubles capacity when full
+int  vecGet(Vec* vec, int index);             // read items[index] (bounds-checked)
+void vecSet(Vec* vec, int index, int value);  // overwrite items[index] (bounds-checked)
+int  vecPop(Vec* vec);                        // remove + return last (errors if empty)
+void vecFree(Vec* vec);                       // hand the heap chunk back
 ```
 
 ## Build
@@ -69,20 +69,20 @@ make clean
 With sanitizers (should report zero errors / leaks):
 
 ```sh
-make clean && make CFLAGS="-fsanitize=address,undefined -g -O0 -Wall -Wextra -Iinclude"
+make clean && make CFLAGS="-fsanitize=address,undefined -g -O0 -Wall -Wextra -IInclude"
 ```
 
 ## Tests
 
-`tests/test.c` has one test per function, run from `main`:
+`Tests/Test.c` has one test per function, run from `main`:
 
-- `test_init` — a fresh crate is empty: `items == NULL`, `used == 0`, `room == 0`
-- `test_push` — values land in order, `used` counts them, and pushing past
+- `testInit` — a fresh crate is empty: `items == NULL`, `used == 0`, `room == 0`
+- `testPush` — values land in order, `used` counts them, and pushing past
   the starting room of 4 forces the doubling (4 → 8 → 16)
-- `test_get` — reads back exactly what was pushed, by index
-- `test_set` — overwrites one slot in place and leaves the size alone
-- `test_pop` — last in, first out; `used` drops but `room` stays put
-- `test_free` — clears the crate and a second free is harmless
+- `testGet` — reads back exactly what was pushed, by index
+- `testSet` — overwrites one slot in place and leaves the size alone
+- `testPop` — last in, first out; `used` drops but `room` stays put
+- `testFree` — clears the crate and a second free is harmless
 
 Each check asserts (via the `CHECK` macro) instead of just printing, so a
 failure is loud and the whole thing exits non-zero if anything is wrong —
@@ -90,17 +90,17 @@ failure is loud and the whole thing exits non-zero if anything is wrong —
 prints nothing but that one line; the per-push `used`/`room` trace from the
 old demo is gone, since the tests check those values directly now.
 
-The three bounds-check paths are tested too — `vec_get` and `vec_set` past
-`used`, and `vec_pop` on an empty crate. Those call `exit()` rather than
-return, so I can't check them in-process: `expect_exit_failure` forks a child
+The three bounds-check paths are tested too — `vecGet` and `vecSet` past
+`used`, and `vecPop` on an empty crate. Those call `exit()` rather than
+return, so I can't check them in-process: `expectExitFailure` forks a child
 to run the bad call and the parent confirms it exited with `EXIT_FAILURE`.
 The child uses an empty vec on purpose, so no heap is allocated and the
 sanitizer build's leak checker stays quiet.
 
 ## Status
 
-Done — I wrote the whole API and it's ASan/UBSan-clean: `vec_init`,
-`vec_push`, `vec_get`, `vec_set`, `vec_pop`, `vec_free`. `tests/test.c` drives
-every one of them. I bounds-check `vec_get`/`vec_set` against `used` and
-make `vec_pop` refuse an empty crate, so a bad call exits with a message
+Done — I wrote the whole API and it's ASan/UBSan-clean: `vecInit`,
+`vecPush`, `vecGet`, `vecSet`, `vecPop`, `vecFree`. `Tests/Test.c` drives
+every one of them. I bounds-check `vecGet`/`vecSet` against `used` and
+make `vecPop` refuse an empty crate, so a bad call exits with a message
 instead of touching junk.
