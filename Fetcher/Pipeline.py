@@ -17,7 +17,7 @@ BASE_URL: str = "http://west.websudoku.com/"
 C_DIR: str = "C"
 
 
-def build_url(args: list[str]) -> str:
+def buildUrl(args: list[str]) -> str:
     """Optional args: [puzzle_id] [level]. No id = random puzzle."""
     level: int = int(args[1]) if len(args) > 1 else LEVEL
     url: str = f"{BASE_URL}?level={level}"
@@ -31,44 +31,44 @@ def fetch(url: str) -> str:
     return urllib.request.urlopen(url).read().decode("utf-8")
 
 
-def puzzle_string(page: str) -> str:
+def puzzleString(page: str) -> str:
     """Pull the 81-char puzzle out of the page. '0' = empty cell, 1-9 = given."""
-    cheat_match: re.Match[str] | None = re.search(r"var cheat='(\d{81})'", page)
-    editmask_match: re.Match[str] | None = re.search(
+    cheatMatch: re.Match[str] | None = re.search(r"var cheat='(\d{81})'", page)
+    editmaskMatch: re.Match[str] | None = re.search(
         r'ID="editmask" [^>]* VALUE="([01]{81})"', page
     )
 
     # BuildSafety: Verify matches exist before extracting groups to prevent NoneType crashes
-    if not cheat_match or not editmask_match:
+    if not cheatMatch or not editmaskMatch:
         raise ValueError(
             "Could not find cheat or editmask patterns on the WebSudoku page."
         )
 
-    cheat: str = cheat_match.group(1)
-    editmask: str = editmask_match.group(1)
+    cheat: str = cheatMatch.group(1)
+    editmask: str = editmaskMatch.group(1)
 
     return "".join(cheat[i] if editmask[i] == "1" else "0" for i in range(81))
 
 
-def save_puzzle(puzzle: str) -> None:
-    """Write puzzle to C/input/puzzle.txt so Solver.c can eat it."""
+def savePuzzle(puzzle: str) -> None:
+    """Write puzzle to C/Input/Puzzle.txt so Solver.c can eat it."""
     with open(f"{C_DIR}/input/puzzle.txt", "w") as f:
         f.write(puzzle)
 
 
 def solve() -> None:
-    """Run the C solver; it writes C/output/solution.txt itself."""
+    """Run the C solver; it writes C/Output/Solution.txt itself."""
     subprocess.run(["build/Solver"], cwd=C_DIR, check=True)
 
 
-def solution_string() -> str:
-    """Read C/output/solution.txt back, keep only the 81 digits."""
+def solutionString() -> str:
+    """Read C/Output/Solution.txt back, keep only the 81 digits."""
     with open(f"{C_DIR}/output/solution.txt", "r") as f:
         text: str = f.read()
     return re.sub(r"\D", "", text)
 
 
-def place_answers(page: str, answer: str) -> str:
+def placeAnswers(page: str, answer: str) -> str:
     """Post the solved grid to the site's form and return its verdict.
 
     The site compares posted cell values positionally in document order
@@ -118,24 +118,24 @@ def place_answers(page: str, answer: str) -> str:
 
 
 def main() -> None:
-    url: str = build_url(sys.argv[1:])
+    url: str = buildUrl(sys.argv[1:])
     page: str = fetch(url)
 
-    puzzle: str = puzzle_string(page)
-    save_puzzle(puzzle)
+    puzzle: str = puzzleString(page)
+    savePuzzle(puzzle)
 
     solve()
-    answer: str = solution_string()
+    answer: str = solutionString()
 
     # The site leaked the real solution in `cheat` — free verification.
-    cheat_match: re.Match[str] | None = re.search(r"var cheat='(\d{81})'", page)
-    cheat: str = cheat_match.group(1) if cheat_match else ""
+    cheatMatch: re.Match[str] | None = re.search(r"var cheat='(\d{81})'", page)
+    cheat: str = cheatMatch.group(1) if cheatMatch else ""
 
     print("puzzle:", puzzle)
     print("answer:", answer)
     print("solver vs site:", "MATCH" if answer == cheat else "MISMATCH")
 
-    verdict: str = place_answers(page, answer)
+    verdict: str = placeAnswers(page, answer)
     print("site verdict:", verdict)
 
 

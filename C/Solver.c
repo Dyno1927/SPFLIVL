@@ -1,17 +1,17 @@
 // Sudoku Solver in C — my backtracking project while learning C.
-// Reads a puzzle from input/puzzle.txt, solves it, prints both out.
+// Reads a puzzle from Input/Puzzle.txt, solves it, prints both out.
 // Send 81 digits (0 = empty cell) and it'll backtrack its way to a solution.
 
 #include <stdio.h>
 
 // The board. 0 means empty, 1-9 means filled. Kept global so
-// solve(), is_valid() and print_grid() can all read/write the same thing
+// solve(), isValid() and printGrid() can all read/write the same thing
 // without passing a 9x9 array around everywhere.
 int grid[9][9];
 
 // Just prints the whole board row by row. Used twice:
 // once for the puzzle we got, once for the solved grid.
-void print_grid() {
+void printGrid() {
     for (int row = 0; row < 9; row++) {
         for (int col = 0; col < 9; col++) {
             // %d, no spaces — numbers just sit next to each other like a real sudoku
@@ -21,8 +21,8 @@ void print_grid() {
     }
 }
 
-void write_solution() {
-    FILE* output = fopen("output/solution.txt", "w");
+void writeSolution() {
+    FILE* output = fopen("Output/Solution.txt", "w");
 
     if (output == NULL) {
         perror("Where da output dir gng :/ ?");
@@ -38,15 +38,15 @@ void write_solution() {
     fclose(output);
 }
 
-// Checks if placing no_to_try at (row, col) breaks sudoku rules.
+// Checks if placing noToTry at (row, col) breaks sudoku rules.
 // Returns 1 if it fits, 0 if not. Three rules, all basic:
-int is_valid(int row, int col, int no_to_try) {
+int isValid(int row, int col, int noToTry) {
     // Rule 1 & 2: number must not already be in the same row or column.
     // i scans the whole row (grid[row][i]) and whole column (grid[i][col])
     // in one loop. Even the current cell is compared but that's fine —
     // the cell is 0 right now so it never equals the candidate.
     for (int i = 0; i < 9; i++) {
-        if (grid[row][i] == no_to_try || grid[i][col] == no_to_try) {
+        if (grid[row][i] == noToTry || grid[i][col] == noToTry) {
             return 0;  // duplicate found somewhere -> can't place it
         }
     }
@@ -54,13 +54,13 @@ int is_valid(int row, int col, int no_to_try) {
     // Rule 3: number must not already be in its 3x3 box.
     // Boxes start at rows/cols 0, 3, 6 — (row / 3) * 3 snaps to the
     // top-left corner of the box the cell lives in.
-    int box_row = (row / 3) * 3;
-    int box_col = (col / 3) * 3;
+    int boxRow = (row / 3) * 3;
+    int boxCol = (col / 3) * 3;
 
     // Sweep the 3x3 box: i/j are offsets (0-2) from that corner.
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            if (grid[box_row + i][box_col + j] == no_to_try) {
+            if (grid[boxRow + i][boxCol + j] == noToTry) {
                 return 0;  // same number already in the box -> illegal
             }
         }
@@ -83,7 +83,7 @@ int solve() {
         for (int col = 0; col < 9; col++) {
             if (grid[row][col] == 0) {                         // found a hole to fill
                 for (int trying = 1; trying <= 9; trying++) {  // try candidates
-                    if (is_valid(row, col, trying)) {
+                    if (isValid(row, col, trying)) {
                         grid[row][col] = trying;  // tentatively place it
 
                         if (solve()) {  // can we finish from here?
@@ -103,7 +103,7 @@ int solve() {
 int main() {
     // Open the puzzle file. Path is relative to where I run it from,
     // so I run it from inside C/ (gcc Solver.c -o build/Solver && build/Solver).
-    FILE* puzzle = fopen("input/puzzle.txt", "r");
+    FILE* puzzle = fopen("Input/Puzzle.txt", "r");
 
     // Don't crash if the file's missing — say what happened and bail.
     if (puzzle == NULL) {
@@ -129,14 +129,14 @@ int main() {
     fclose(puzzle);  // always close what I open
 
     printf("\nIntial Sudoku Puzzle\n");
-    print_grid();
+    printGrid();
 
     printf("\nSolving...\n\n");
 
     if (solve()) {
         printf("Solved Sudoku Grid:\n");
-        print_grid();
-        write_solution();
+        printGrid();
+        writeSolution();
     } else {
         printf("No solution exists for this Sudoku grid.\n");
     }

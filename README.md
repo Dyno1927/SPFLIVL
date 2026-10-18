@@ -15,15 +15,15 @@ Sudoku-Solver/
 
 ## How it works
 
-1. **Read** — `main()` opens `input/puzzle.txt` and stores each digit into
+1. **Read** — `main()` opens `Input/Puzzle.txt` and stores each digit into
    the 9x9 `grid`. A flat position counter `pos` (0–80) maps to the grid
    with `pos/9` (row) and `pos%9` (column). `0` = empty cell.
-2. **Check** — `is_valid()` enforces the three sudoku rules: no duplicate
+2. **Check** — `isValid()` enforces the three sudoku rules: no duplicate
    in the row, column, or 3x3 box.
 3. **Solve** — `solve()` finds the first empty cell, tries digits 1–9,
    recurses, and **un-does the move** if that path dead-ends. That
    change-and-undo loop is backtracking.
-4. **Print** — `print_grid()` shows the puzzle and the solution.
+4. **Print** — `printGrid()` shows the puzzle and the solution.
 
 ## Building & running
 
@@ -32,7 +32,7 @@ mkdir -p build
 gcc Solver.c -o build/Solver && build/Solver
 ```
 
-Run from inside `C/` so the relative path `input/puzzle.txt` resolves.
+Run from inside `C/` so the relative path `Input/Puzzle.txt` resolves.
 
 For warnings during development:
 ```sh
