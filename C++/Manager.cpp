@@ -18,29 +18,29 @@ int main()
     string cmd;
 
     Account vault[1024];
-    int account_count = 0;
+    int accountCount = 0;
     int choice;
 
     // --- Load the vault from disk -------------------------------
 
-    ifstream fp("output/vault.txt");
+    ifstream fp("Output/Vault.txt");
 
     if (fp.is_open())
     {
-        int loaded_count;
+        int loadedCount;
 
-        if (fp >> loaded_count)
+        if (fp >> loadedCount)
         {
             // Validate the count before accessing the array.
-            if (loaded_count >= 0 && loaded_count <= 1024)
+            if (loadedCount >= 0 && loadedCount <= 1024)
             {
-                account_count = 0;
+                accountCount = 0;
 
-                for (int i = 0; i < loaded_count; ++i)
+                for (int i = 0; i < loadedCount; ++i)
                 {
                     if (fp >> vault[i].app >> vault[i].user >> vault[i].pass)
                     {
-                        ++account_count;
+                        ++accountCount;
                     }
                     else
                     {
@@ -89,14 +89,14 @@ int main()
         {
             cout << "\n-> Selected: Manage\n\n";
 
-            if (account_count == 0)
+            if (accountCount == 0)
             {
                 cout << "No accounts stored yet!\n";
             }
             else
             {
                 // Display the list of saved accounts.
-                for (int i = 0; i < account_count; ++i)
+                for (int i = 0; i < accountCount; ++i)
                 {
                     cout << i + 1 << ". " << vault[i].app << '\n';
                 }
@@ -108,7 +108,7 @@ int main()
                     int index = choice - 1;
 
                     // Validate the selected account.
-                    if (index >= 0 && index < account_count)
+                    if (index >= 0 && index < accountCount)
                     {
                         cout << "\n-> App name: " << vault[index].app << '\n';
 
@@ -137,7 +137,7 @@ int main()
         {
             cout << "\n-> Selected: Create\n";
 
-            if (account_count >= 1024)
+            if (accountCount >= 1024)
             {
                 cout << "Vault is full!\n";
                 continue;
@@ -145,42 +145,42 @@ int main()
 
             // Collect account details.
             cout << "\n-> Please choose the app's name: ";
-            cin >> vault[account_count].app;
+            cin >> vault[accountCount].app;
 
             cout << "-> Please choose the username or email: ";
-            cin >> vault[account_count].user;
+            cin >> vault[accountCount].user;
 
             cout << "-> Please choose a password: ";
-            cin >> vault[account_count].pass;
+            cin >> vault[accountCount].pass;
 
             // Confirm the new account.
-            cout << "\n-> App name: " << vault[account_count].app << '\n';
+            cout << "\n-> App name: " << vault[accountCount].app << '\n';
 
-            cout << "-> Username: " << vault[account_count].user << '\n';
+            cout << "-> Username: " << vault[accountCount].user << '\n';
 
             cout << "-> Password: [hidden]\n";
 
             // Account is now part of the vault.
-            ++account_count;
+            ++accountCount;
 
             // --- Save the entire vault to disk -------------------
 
-            ofstream save_fp("output/vault.txt");
+            ofstream saveFp("Output/Vault.txt");
 
-            if (save_fp.is_open())
+            if (saveFp.is_open())
             {
                 // First line stores the account count.
-                save_fp << account_count << '\n';
+                saveFp << accountCount << '\n';
 
                 // Write each account on its own line.
-                for (int i = 0; i < account_count; ++i)
+                for (int i = 0; i < accountCount; ++i)
                 {
-                    save_fp << vault[i].app << ' ' << vault[i].user << ' ' << vault[i].pass << '\n';
+                    saveFp << vault[i].app << ' ' << vault[i].user << ' ' << vault[i].pass << '\n';
                 }
 
-                save_fp.close();
+                saveFp.close();
 
-                if (save_fp)
+                if (saveFp)
                 {
                     cout << "Account saved successfully!\n";
                 }

@@ -2,6 +2,6 @@
 **/build/
 
 # Output/vault.txt (runtime data store - keep out of version control)
-**/output/vault.txt
+**/Output/Vault.txt
 # keep the directory itself (see README, .gitkeep)
-!**/output/
+!**/Output/
