@@ -73,7 +73,7 @@ int main(void)
             }
             else
             {
-                // Print every saved app, numbered 1..n (1-indexed for humans).
+                // I print every saved app, numbered 1..n (1-indexed for humans).
                 for (int i = 0; i < accountCount; i++)
                 {
                     printf("%d. %s\n", i + 1, vault[i].App);

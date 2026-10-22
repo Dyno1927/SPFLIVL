@@ -104,7 +104,7 @@ fn read_line(prompt: &str) -> String {
 }
 
 fn main() {
-    // Load on start — same as the C/C++ versions.
+    // I load on start — same as the C/C++ versions.
     let mut vault: Vec<Account> = load_vault();
 
     println!("Hello, this is a Password Manager CLI (in Rust).");
