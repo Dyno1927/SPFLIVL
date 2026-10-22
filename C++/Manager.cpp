@@ -1,3 +1,14 @@
+// Manager.cpp — a CLI password manager, my C++ project.
+// Stores app logins (app name, username, password) in a plain-text vault
+// file (Output/Vault.txt). Reads it on start, rewrites it on every create.
+// No encryption here — this is a learning project, don't put real
+// passwords in it.
+//
+// I wrote this one to feel the difference from C: std::string instead of
+// fixed char buffers, and streams (ifstream/ofstream) instead of fopen.
+// The logic is the same as Manager.c on purpose, so the two can be read
+// side by side.
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -5,6 +16,8 @@
 using namespace std;
 
 // One saved login: app name, username, password.
+// Unlike C, I use std::string here, so the text grows as needed and I
+// never worry about a 32-char cap or a missing '\0'.
 typedef struct
 {
     string app;
@@ -22,6 +35,9 @@ int main()
     int choice;
 
     // --- Load the vault from disk -------------------------------
+    // ifstream's constructor opens the file; if it doesn't exist yet (first
+    // run) is_open() is false and I just skip loading. Like C's fopen
+    // returning NULL, but RAII closes it for me when fp goes out of scope.
 
     ifstream fp("Output/Vault.txt");
 
@@ -31,7 +47,9 @@ int main()
 
         if (fp >> loadedCount)
         {
-            // Validate the count before accessing the array.
+            // I validate the count before touching the array — a negative or
+            // oversized count in a tampered file must not drive me past the
+            // 1024 slots.
             if (loadedCount >= 0 && loadedCount <= 1024)
             {
                 accountCount = 0;
@@ -95,7 +113,7 @@ int main()
             }
             else
             {
-                // Display the list of saved accounts.
+                // I display the list of saved accounts, numbered 1..n for humans.
                 for (int i = 0; i < accountCount; ++i)
                 {
                     cout << i + 1 << ". " << vault[i].app << '\n';
@@ -107,7 +125,8 @@ int main()
                 {
                     int index = choice - 1;
 
-                    // Validate the selected account.
+                    // I validate the selected account before indexing — reading
+                    // past the end is undefined behavior, same as in C.
                     if (index >= 0 && index < accountCount)
                     {
                         cout << "\n-> App name: " << vault[index].app << '\n';
@@ -123,7 +142,8 @@ int main()
                 }
                 else
                 {
-                    // Recover if the user enters text instead of a number.
+                    // I recover if the user types text instead of a number,
+                    // so one bad input doesn't kill the whole session.
                     cin.clear();
                     cin.ignore(10000, '\n');
 
@@ -143,7 +163,7 @@ int main()
                 continue;
             }
 
-            // Collect account details.
+            // I collect the account details.
             cout << "\n-> Please choose the app's name: ";
             cin >> vault[accountCount].app;
 
@@ -153,14 +173,15 @@ int main()
             cout << "-> Please choose a password: ";
             cin >> vault[accountCount].pass;
 
-            // Confirm the new account.
+            // I confirm the new account.
             cout << "\n-> App name: " << vault[accountCount].app << '\n';
 
             cout << "-> Username: " << vault[accountCount].user << '\n';
 
-            cout << "-> Password: [hidden]\n";
+            // I echo the entry back so I can confirm it's what I entered.
+            cout << "-> Password: " << vault[accountCount].pass << '\n';
 
-            // Account is now part of the vault.
+            // The account is now part of the vault.
             ++accountCount;
 
             // --- Save the entire vault to disk -------------------
@@ -172,7 +193,7 @@ int main()
                 // First line stores the account count.
                 saveFp << accountCount << '\n';
 
-                // Write each account on its own line.
+                // I write each account on its own line.
                 for (int i = 0; i < accountCount; ++i)
                 {
                     saveFp << vault[i].app << ' ' << vault[i].user << ' ' << vault[i].pass << '\n';
