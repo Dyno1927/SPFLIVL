@@ -6,7 +6,7 @@ instructions). I keep them here so I have one place to look back at.
 
 ## Projects
 
-- **Calculator-In-C++** — a basic and an advanced calculator in C++.
+- **Calculator** — a basic and an advanced calculator in C++.
 - **Sudoku-Solver** — a backtracking Sudoku solver in C. Reads a puzzle from
   a text file, solves it, prints both. See `Sudoku-Solver/README.md`.
 - **Dynamic-Array** — a growing array (vector) written from scratch in C:
