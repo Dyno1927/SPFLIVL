@@ -1,0 +1,11 @@
+# Compiled
+build/
+
+# Written by Solver.c on every solve
+C/Output/Solution.txt
+
+# Written by Fetcher/pipeline.py on every fetch — new puzzle each run
+C/Input/Puzzle.txt
+
+# Python bytecode
+__pycache__/
