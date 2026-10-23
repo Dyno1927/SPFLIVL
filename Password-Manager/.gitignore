@@ -1,0 +1,6 @@
+# Compiled artifacts
+**/Build/
+**/target/
+
+# Runtime / Output
+**/Output/
