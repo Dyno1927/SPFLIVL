@@ -34,7 +34,7 @@ int main()
     int accountCount = 0;
     int choice;
 
-    // --- Load the vault from disk -------------------------------
+    //  Load the vault from disk
     // ifstream's constructor opens the file; if it doesn't exist yet (first
     // run) is_open() is false and I just skip loading. Like C's fopen
     // returning NULL, but RAII closes it for me when fp goes out of scope.
@@ -83,7 +83,7 @@ int main()
     cout << "Hello, this is a Password Manager CLI "
          << "(but in C++ rather than C).\n";
 
-    // --- Main menu loop -----------------------------------------
+    //  Main menu loop
 
     while (running)
     {
@@ -184,7 +184,7 @@ int main()
             // The account is now part of the vault.
             ++accountCount;
 
-            // --- Save the entire vault to disk -------------------
+            //  Save the entire vault to disk
 
             ofstream saveFp("Output/Vault.txt");
 

@@ -16,7 +16,7 @@
 use std::fs;
 use std::io::{self, Write};
 
-// --- One saved login -----------------------------------------------
+//  One saved login
 // `#[derive(...)]` auto-generates trait impls for us: Debug lets us
 // print with {:?}, Clone lets us copy an Account cheaply.
 #[derive(Debug, Clone)]
@@ -29,7 +29,7 @@ struct Account {
 const MAX_ACCOUNTS: usize = 1024;
 const VAULT_PATH: &str = "Output/Vault.txt";
 
-// --- Load the vault from disk (if it exists) -----------------------
+//  Load the vault from disk (if it exists)
 // Returns a Vec<Account>. An empty Vec means "no file yet", which is
 // fine on first run. No NULL checks like in C — the type system
 // encodes "might not exist" via Result/Option instead.
@@ -72,7 +72,7 @@ fn load_vault() -> Vec<Account> {
     vault
 }
 
-// --- Save the whole vault to disk ----------------------------------
+//  Save the whole vault to disk
 // Takes a slice &[Account]: a borrowed view of the Vec, no copy.
 // Returns io::Result<()> so callers can react to write errors.
 fn save_vault(vault: &[Account]) -> io::Result<()> {
@@ -88,7 +88,7 @@ fn save_vault(vault: &[Account]) -> io::Result<()> {
     Ok(()) // success: unit value
 }
 
-// --- Read one line of user input -----------------------------------
+//  Read one line of user input
 fn read_line(prompt: &str) -> String {
     print!("{}", prompt);
     // stdout is buffered; flush so the prompt shows before blocking.
@@ -109,7 +109,7 @@ fn main() {
 
     println!("Hello, this is a Password Manager CLI (in Rust).");
 
-    // --- Main menu loop --------------------------------------------
+    //  Main menu loop
     // `loop` is Rust's infinite loop; `break` exits it.
     loop {
         let cmd = read_line("\nPlease choose an option [Manage | Create | Exit]: ");
@@ -123,7 +123,7 @@ fn main() {
                 break;
             }
 
-            // --- Manage: list accounts and view one ---------------
+            //  Manage: list accounts and view one
             "m" | "manage" => {
                 println!("\n-> Selected: Manage\n");
 
@@ -151,7 +151,7 @@ fn main() {
                 }
             }
 
-            // --- Create: add a new account and save to disk -------
+            //  Create: add a new account and save to disk
             "c" | "create" => {
                 println!("\n-> Selected: Create");
 
@@ -172,14 +172,14 @@ fn main() {
                 // push moves ownership of the three Strings into the Account.
                 vault.push(Account { app, user, pass });
 
-                // --- Rewrite the whole vault file -------------------
+                //  Rewrite the whole vault file
                 match save_vault(&vault) {
                     Ok(()) => println!("Account saved successfully!"),
                     Err(e) => println!("Error: Could not save to disk: {}", e),
                 }
             }
 
-            // --- Anything else -----------------------------------
+            //  Anything else
             _ => println!("Invalid option. Please try again."),
         }
     }

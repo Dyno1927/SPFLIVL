@@ -24,7 +24,7 @@ int main(void)
     int accountCount = 0; // how many slots are actually filled
     int choice;           // which account the user picked
 
-    // --- Load the vault from disk (if it exists) ------------------
+    //  Load the vault from disk (if it exists)
     // fopen with "r" returns NULL if there's no file yet, which is
     // fine on first run. NOTE: C's fopen never creates folders, so
     // Output/ must already exist — that's why .gitkeep is in there.
@@ -47,7 +47,7 @@ int main(void)
 
     printf("Hello, This is a Password Manager CLI\n");
 
-    // --- Main menu loop --------------------------------------------
+    //  Main menu loop
     while (running)
     {
         printf("\nPlease Choose an option [Manage | Create | Exit]: ");
@@ -64,7 +64,7 @@ int main(void)
         }
         else if (cmd[0] == 'M' || cmd[0] == 'm')
         {
-            // --- Manage: list accounts and view one -----------------
+            //  Manage: list accounts and view one
             printf("\n-> Selected: Manage\n\n");
 
             if (accountCount == 0)
@@ -103,7 +103,7 @@ int main(void)
         }
         else if (cmd[0] == 'C' || cmd[0] == 'c')
         {
-            // --- Create: add a new account and save to disk ---------
+            //  Create: add a new account and save to disk
             printf("\n-> Selected: Create\n");
 
             if (accountCount < 1024)
@@ -124,7 +124,7 @@ int main(void)
 
                 accountCount++; // new entry is now part of the vault
 
-                // --- Rewrite the whole vault file -------------------
+                //  Rewrite the whole vault file
                 // "w" truncates and rewrites everything, so the file
                 // always mirrors what's in memory.
                 FILE *saveFp = fopen("Output/Vault.txt", "w");
